@@ -13,8 +13,14 @@ ggplot(data=SEAP_bar, aes(x=factor(mutants), y=values,
   #assign the shape, size, and fill to default code
   scale_shape_identity() +
   scale_size_identity() +
-  geom_bar(aes(size=0.5), 
+  geom_bar(width=0.8,
            stat='identity', position="dodge") +
+  # Because the bars and errorbars have different widths
+  # we need to specify how wide the objects we are dodging are
+  # make ymin as the real value so that only have up errorbars
+  geom_errorbar(aes(ymax = values + SEM, ymin=values), 
+                position=position_dodge(0.8),
+                width=0.25) +
   scale_fill_manual(name="category",
                     breaks=c("Cad_0", "Cad_1000uM"),
                     labels=c("no ligand", "Cadaverine 1000uM"),
@@ -23,15 +29,18 @@ ggplot(data=SEAP_bar, aes(x=factor(mutants), y=values,
                       breaks=c("Cad_0", "Cad_1000uM"),
                       labels=c("no ligand", "Cadaverine 1000uM"),
                       values=c('black','black')) +
-  ylim(0,200000) +
   #make y axis intersects x axis at 0
-  scale_y_continuous(expand=c(0,0)) +
+  scale_y_continuous(limits=c(0,200000),expand=c(0,0)) +
+  #change x axis labels
+  scale_x_discrete(limits=c('no receptor',"zTAAR13c","D112A","D202A")) +
+  xlab("zTAAR13c and mutants") + ylab("SEAP activity") +
+  ggtitle("Cadaverine on zTAAR13c and mutants") +
   #theme_bw() will get rid of the background
   theme_bw() + 
   #remove box sorrounding the figure legend
   theme(legend.key = element_rect(colour="white", fill='white')) +
   #put the legend inside the figure, use relative coordinates between 0 and 1
-  theme(legend.position = c(.3, .9))+
+  theme(legend.position = c(.8, .8))+
   #rotate the x axis to 45 degree,not just angle= but also hjust=1 to 
   #ensure that end of the label is placed under the tick mark. 
   #Also theme_bw() should be placed before theme specification of axis texts.
